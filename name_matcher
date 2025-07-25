@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Name Matcher AI Adverse Media Screening Tool
+# Executable wrapper for the Python pipeline
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Run the Python pipeline with all arguments passed through
+python "$SCRIPT_DIR/tool.py" "$@"
