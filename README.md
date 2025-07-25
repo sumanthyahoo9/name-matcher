@@ -146,10 +146,10 @@ python -m spacy download de_core_news_sm
 #### Step 3: Setup the Executable
 ```bash
 # Make the tool executable
-chmod +x name_matcher
+chmod +x name_matcher_tool
 
 # Test installation
-./name_matcher --help
+./name_matcher_tool --help
 ```
 
 #### Step 4: Make Globally Available (Optional)

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Complete AI Adverse Media Screening Pipeline
+Complete Name Matcher AI Adverse Media Screening Pipeline
 Command-line interface for the full Translation → NER → LLM pipeline
 
 Usage:
-    python tool_pipeline.py <file_path> <target_name> [--debug] [--api-key YOUR_KEY]
+    python name_matcher_pipeline.py <file_path> <target_name> [--debug] [--api-key YOUR_KEY]
 
 Example:
-    python tool.py data/my_text.txt "John Smith" --debug
-    python tool.py data/french_article.rtf "Marie Dubois" --api-key sk-...
+    python name_matcher_pipeline.py data/my_text.txt "John Smith" --debug
+    python name_matcher_pipeline.py data/french_article.rtf "Marie Dubois" --api-key sk-...
 """
 
 import argparse
@@ -17,28 +17,29 @@ import os
 import json
 import traceback
 
-# Import our pipeline components
+# Import our pipeline components - CORRECTED IMPORTS
 try:
-    from ner_pipeline_overall import MultilingualIntegratedPipeline
-    from llm_matching import RegulatoryLLMMatcher
+    from ner_pipeline_overall import LLMReadyPipeline  # Changed from MultilingualIntegratedPipeline
+    from llm_matching import RegulatoryLLMMatcher      # Changed from clean_llm_matcher
 except ImportError as e:
     print(f"❌ Error importing pipeline components: {e}")
-    print("Make sure ner_pipeline_overall.py and clean_llm_matcher.py are in the same directory")
+    print("Make sure ner_pipeline_overall.py and llm_matching.py are in the same directory")
+    print("Required classes: LLMReadyPipeline, RegulatoryLLMMatcher")
     sys.exit(1)
 
 class NameMatcherPipeline:
-    """Complete tool AI adverse media screening pipeline"""
+    """Complete Name Matcher AI adverse media screening pipeline"""
     
     def __init__(self, openai_api_key=None, debug=False):
         """Initialize the complete pipeline"""
         self.debug = debug
         
         if self.debug:
-            print("🚀 Initializing tool AI Pipeline...")
+            print("🚀 Initializing Name Matcher AI Pipeline...")
         
-        # Initialize NER pipeline
+        # Initialize NER pipeline - CORRECTED CLASS NAME
         try:
-            self.ner_pipeline = MultilingualIntegratedPipeline()
+            self.ner_pipeline = LLMReadyPipeline()  # Changed from MultilingualIntegratedPipeline
             if self.debug:
                 print("✅ NER Pipeline initialized")
         except Exception as e:
@@ -70,18 +71,28 @@ class NameMatcherPipeline:
         """
         if self.debug:
             print(f"\n{'='*80}")
-            print("📋 tool AI ADVERSE MEDIA SCREENING")
+            print("📋 NAME MATCHER AI ADVERSE MEDIA SCREENING")
             print(f"{'='*80}")
             print(f"File: {file_path}")
             print(f"Target: {target_name}")
             print(f"{'='*80}")
         
-        # Step 1: NER Pipeline (Translation + Entity Extraction)
+        # Step 1: NER Pipeline (Translation + Entity Extraction) - CORRECTED METHOD NAME
         if self.debug:
             print("\n🔄 STEP 1: Running NER Pipeline...")
         
         try:
-            ner_data = self.ner_pipeline.get_llm_ready_data(file_path, target_name)
+            # Changed method name to match actual implementation
+            ner_result = self.ner_pipeline.process_for_llm(file_path, target_name, debug=self.debug)
+            
+            # Extract data from the result structure
+            ner_data = {
+                'target_name': ner_result['target_name'],
+                'original_text': ner_result['original_text'],
+                'translated_text': ner_result['translated_text'],
+                'detected_language': ner_result['detected_language'],
+                'entities': self._convert_entities_to_person_format(ner_result['extraction_result']['all_entities'])
+            }
             
             if self.debug:
                 print("✅ NER Pipeline complete:")
@@ -101,11 +112,13 @@ class NameMatcherPipeline:
                 
         except Exception as e:
             print(f"❌ NER Pipeline failed: {e}")
+            if self.debug:
+                traceback.print_exc()
             return {"error": f"NER Pipeline failed: {e}"}
         
         # Step 2: LLM Matching
         if self.debug:
-            print("\n🔄 STEP 2: Running LLM Matching...")
+            print(f"\n🔄 STEP 2: Running LLM Matching...")
         
         try:
             llm_result = self.llm_matcher.match_with_full_context(
@@ -125,6 +138,8 @@ class NameMatcherPipeline:
         
         except Exception as e:
             print(f"❌ LLM Matching failed: {e}")
+            if self.debug:
+                traceback.print_exc()
             return {"error": f"LLM Matching failed: {e}"}
         
         # Step 3: Compile Final Results
@@ -143,15 +158,33 @@ class NameMatcherPipeline:
             "match_explanation": llm_result.explanation,
             "match_method": llm_result.method,
             "entities_analyzed": llm_result.entities_analyzed,
-            "pipeline_version": "tool_AI_v1.0"
+            "pipeline_version": "NameMatcher_AI_v1.0"
         }
         
         return final_results
     
+    def _convert_entities_to_person_format(self, entities):
+        """Convert Entity objects to PersonEntity format expected by LLM matcher"""
+        from llm_matching import PersonEntity
+        
+        converted_entities = []
+        for entity in entities:
+            person_entity = PersonEntity(
+                name=entity.name,
+                confidence=entity.confidence,
+                source=entity.source,
+                context=entity.context,
+                start_char=getattr(entity, 'start_char', 0),
+                end_char=getattr(entity, 'end_char', 0)
+            )
+            converted_entities.append(person_entity)
+        
+        return converted_entities
+    
     def print_final_summary(self, results):
         """Print a clean final summary"""
         print(f"\n{'='*80}")
-        print("📊 FINAL ARVA AI SCREENING RESULTS")
+        print("📊 FINAL NAME MATCHER AI SCREENING RESULTS")
         print(f"{'='*80}")
         
         if "error" in results:
@@ -205,21 +238,34 @@ class NameMatcherPipeline:
 def main():
     """Command-line interface"""
     parser = argparse.ArgumentParser(
-        description='Name Matcher Adverse Media Screening Pipeline',
+        description='Name Matcher AI Adverse Media Screening Pipeline - Regulatory-compliant name matching for adverse media articles',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
+Supported File Formats:
+  • TXT files (plain text)
+  • RTF files (Rich Text Format)
+  • Note: PDF support can be added with additional libraries
+
+Supported Languages:
+  • English, Spanish, French, German
+  • Automatic language detection and translation
+
 Examples:
-  python tool.py data/article.txt "John Smith"
-  python tool.py data/french_article.rtf "Marie Dubois" --debug
-  python tool.py data/german_article.rtf "Klaus Mueller" --api-key sk-proj-...
-  python tool.py data/spanish_article.txt "Carlos Rodriguez" --output results.json
+  name_matcher_tool data/article.txt "John Smith"
+  name_matcher_tool data/french_article.rtf "Marie Dubois" --debug
+  name_matcher_tool data/german_article.rtf "Klaus Mueller" --api-key sk-proj-...
+  name_matcher_tool data/spanish_article.txt "Carlos Rodriguez" --output results.json
+  
+  # With environment variable (recommended):
+  export OPENAI_API_KEY="sk-proj-your-key-here"
+  name_matcher_tool my_article.rtf "Target Person" --debug
         """
     )
     
     parser.add_argument('file_path', 
-                       help='Path to text or RTF file containing the article')
+                       help='Path to article file (TXT, RTF supported; PDF can be added), recommended <3,000 words')
     parser.add_argument('target_name', 
-                       help='Name of the individual to search for')
+                       help='Name of the individual to search for in the article')
     parser.add_argument('--debug', 
                        action='store_true',
                        help='Enable debug output')
