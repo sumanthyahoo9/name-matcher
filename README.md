@@ -25,13 +25,13 @@ The Name matcher AI tool helps analysts quickly determine if a person's name app
 
 ```bash
 # Simple check - does "John Smith" appear in this article?
-name_matcher my_article.txt "John Smith"
+name_matcher_tool my_article.txt "John Smith"
 
 # Check with detailed output (recommended for learning)
-name_matcher my_article.txt "John Smith" --debug
+name_matcher_tool my_article.txt "John Smith" --debug
 
 # Save results to a file for records
-name_matcher my_article.txt "John Smith" --output john_smith_results.json
+name_matcher_tool my_article.txt "John Smith" --output john_smith_results.json
 ```
 
 ### Understanding Results
@@ -86,22 +86,22 @@ The tool extracts entities from the full text regardless of length, but very lon
 
 ```bash
 # Check if Christopher Gröner appears in a German article
-name_matcher german_insolvency_article.rtf "Christopher Gröner"
+name_matcher_tool german_insolvency_article.rtf "Christopher Gröner"
 # Result: MATCH (recognizes Christopher = Christoph in German)
 
 # Check if Anne Brorhilker appears in French article  
-name_matcher french_tax_article.rtf "Annie Brorhilker"
+name_matcher_tool french_tax_article.rtf "Annie Brorhilker"
 # Result: NO_MATCH (Anne ≠ Annie, different names)
 
 # Check Spanish article with debug details
-name_matcher spanish_fraud_article.txt "Carlos Rodriguez" --debug
+name_matcher_tool spanish_fraud_article.txt "Carlos Rodriguez" --debug
 ```
 
 ### Getting Help
 
 ```bash
 # See all available options
-name_matcher --help
+name_matcher_tool --help
 
 # Contact your IT team if you get error messages
 # Common issues: missing API key, file not found, wrong file format
@@ -159,8 +159,8 @@ echo 'export PATH="$PATH:'$(pwd)'"' >> ~/.bashrc
 source ~/.bashrc
 
 # OR install system-wide (requires admin)
-sudo cp name_matcher /usr/local/bin/
-sudo chmod +x /usr/local/bin/name_matcher
+sudo cp name_matcher_tool /usr/local/bin/
+sudo chmod +x /usr/local/bin/name_matcher_tool
 ```
 
 #### Step 5: Configure API Key
@@ -191,7 +191,7 @@ python-dotenv>=0.19.0
 ### Command Line Options
 
 ```bash
-name_matcher [FILE] [TARGET_NAME] [OPTIONS]
+name_matcher_tool [FILE] [TARGET_NAME] [OPTIONS]
 
 Required:
   FILE          Path to article file (TXT or RTF)
@@ -218,11 +218,11 @@ OUTPUT_DIR="results"
 
 mkdir -p "$OUTPUT_DIR"
 
-for file in data/*.txt data/*.rtf; do
+for file in raw_articles/*.txt raw_articles/*.rtf; do
     if [ -f "$file" ]; then
         filename=$(basename "$file")
         echo "Processing: $filename"
-        name_matcher "$file" "$TARGET_NAME" --output "$OUTPUT_DIR/${filename%.*}_results.json"
+        name_matcher_tool "$file" "$TARGET_NAME" --output "$OUTPUT_DIR/${filename%.*}_results.json"
     fi
 done
 
@@ -289,7 +289,7 @@ The tool handles complex name variations:
 # Solution: Set your API key
 export OPENAI_API_KEY="sk-proj-your-key-here"
 # Or use --api-key flag
-name_matcher article.txt "Name" --api-key sk-proj-your-key-here
+name_matcher_tool article.txt "Name" --api-key sk-proj-your-key-here
 ```
 
 **❌ "File not found"**
@@ -297,7 +297,7 @@ name_matcher article.txt "Name" --api-key sk-proj-your-key-here
 # Solution: Check file path and ensure file exists
 ls -la my_article.txt
 # Use full path if needed
-name_matcher /full/path/to/article.txt "Name"
+name_matcher_tool /full/path/to/article.txt "Name"
 ```
 
 **❌ "spaCy model not found"**
@@ -316,7 +316,7 @@ pip install -r requirements.txt
 **❌ "Permission denied"**
 ```bash
 # Solution: Make script executable
-chmod +x name_matcher
+chmod +x name_matcher_tool
 ```
 
 ### Debug Mode
@@ -324,7 +324,7 @@ chmod +x name_matcher
 Use `--debug` to see detailed processing:
 
 ```bash
-name_matcher article.txt "John Smith" --debug
+name_matcher_tool article.txt "John Smith" --debug
 ```
 
 This shows:

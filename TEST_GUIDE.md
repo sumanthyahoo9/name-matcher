@@ -6,7 +6,7 @@
 
 Your test data should be organized like this:
 ```
-data/raw_articles/
+raw_articles/
 ├── english_1_positive.txt
 ├── english_1_negative.txt
 ├── french_1_positive.rtf
@@ -42,14 +42,14 @@ will be on the bench of the accused..."
 **Positive Test Case:**
 ```bash
 # This should return MATCH
-name_matcher data/raw_articles/french_1_positive.rtf "John Varley"
+name_matcher_tool raw_articles/french_1_positive.rtf "John Varley"
 # ✅ Expected: MATCH (John Varley is mentioned in the article)
 ```
 
 **Negative Test Case (Same Article):**
 ```bash
 # This should return NO_MATCH  
-name_matcher tool data/raw_articles/french_1_positive.rtf "Claude AI"
+name_matcher_tool tool raw_articles/french_1_positive.rtf "Claude AI"
 # ❌ Expected: NO_MATCH (Claude AI is not mentioned in the article)
 ```
 
@@ -61,16 +61,16 @@ Test that the tool correctly identifies and processes different languages:
 
 ```bash
 # English articles (no translation needed)
-name_matcher data/raw_articles/english_1_positive.txt "Target Person"
+name_matcher_tool raw_articles/english_1_positive.txt "Target Person"
 
 # French articles (should auto-translate)
-name_matcher data/raw_articles/french_1_positive.rtf "Person Mentioned"
+name_matcher_tool raw_articles/french_1_positive.rtf "Person Mentioned"
 
 # German articles (should auto-translate)  
-name_matcher data/raw_articles/german_1_positive.rtf "Mentioned Person"
+name_matcher_tool raw_articles/german_1_positive.rtf "Mentioned Person"
 
 # Spanish articles (should auto-translate)
-name_matcher data/raw_articles/spanish_1_positive.rtf "Persona Mencionada"
+name_matcher_tool raw_articles/spanish_1_positive.rtf "Persona Mencionada"
 ```
 
 ### **2. Positive Match Tests**
@@ -79,16 +79,16 @@ These test cases should return **MATCH** results:
 
 ```bash
 # Test exact name matches
-name_matcher data/raw_articles/french_1_positive.rtf "John Varley"
-name_matcher data/raw_articles/german_3_positive.rtf "Christoph Gröner"  
-name_matcher data/raw_articles/spanish_1_positive.rtf "Alejandro Hamlyn"
+name_matcher_tool raw_articles/french_1_positive.rtf "John Varley"
+name_matcher_tool raw_articles/german_3_positive.rtf "Christoph Gröner"  
+name_matcher_tool raw_articles/spanish_1_positive.rtf "Alejandro Hamlyn"
 
 # Test cultural name variations
-name_matcher data/raw_articles/german_3_positive.rtf "Christopher Gröner"
+name_matcher_tool raw_articles/german_3_positive.rtf "Christopher Gröner"
 # Should MATCH (Christopher = Christoph in German context)
 
 # Test spelling variations
-name_matcher data/raw_articles/german_1_positive.rtf "Sanjay Shah" 
+name_matcher_tool raw_articles/german_1_positive.rtf "Sanjay Shah" 
 # (if article contains "Sanjay Shah")
 ```
 
@@ -98,16 +98,16 @@ These test cases should return **NO_MATCH** results:
 
 ```bash
 # Test with names not in the article
-name_matcher data/raw_articles/french_1_negative.rtf "Claude AI"
-name_matcher data/raw_articles/german_1_positive.rtf "Albert Einstein"
-name_matcher data/raw_articles/spanish_negative_1.rtf "Marie Curie"
+name_matcher_tool raw_articles/french_1_negative.rtf "Claude AI"
+name_matcher_tool raw_articles/german_1_positive.rtf "Albert Einstein"
+name_matcher_tool raw_articles/spanish_negative_1.rtf "Marie Curie"
 
 # Test similar but different names
-name_matcher data/raw_articles/french_1_positive.rtf "Annie Brorhilker"
+name_matcher_tool raw_articles/french_1_positive.rtf "Annie Brorhilker"
 # Should be NO_MATCH if article contains "Anne Brorhilker"
 
 # Test partial name matches (should be conservative)
-name_matcher data/raw_articles/spanish_1_positive.rtf "Alejandro"
+name_matcher_tool raw_articles/spanish_1_positive.rtf "Alejandro"
 # Should be NO_MATCH (partial name only, could be different person)
 ```
 
@@ -117,19 +117,19 @@ Test challenging scenarios to validate the tool's precision:
 
 ```bash
 # Test nickname variations
-name_matcher data/raw_articles/english_1_positive.txt "Jim Smith"
+name_matcher_tool raw_articles/english_1_positive.txt "Jim Smith"
 # Should MATCH if article contains "James Smith"
 
 # Test different cultural name forms
-name_matcher data/raw_articles/german_2_positive.rtf "Michael Mueller"
+name_matcher_tool raw_articles/german_2_positive.rtf "Michael Mueller"
 # Should MATCH if article contains "Mikhail Mueller"
 
 # Test organization vs. person confusion
-name_matcher data/raw_articles/spanish_1_positive.rtf "Lockbits"
+name_matcher_tool raw_articles/spanish_1_positive.rtf "Lockbits"
 # Should be NO_MATCH if article only mentions "Lockbit" organization
 
 # Test surname-only matches (should be conservative)
-name_matcher data/raw_articles/french_2_negative.rtf "Shah"
+name_matcher_tool raw_articles/french_2_negative.rtf "Shah"
 # Should be NO_MATCH unless strong contextual evidence
 ```
 
@@ -146,19 +146,19 @@ echo "===================================="
 
 # Test 1: English processing
 echo "Test 1: English article processing..."
-name_matcher data/raw_articles/english_1_positive.txt "Known Person Name"
+name_matcher_tool raw_articles/english_1_positive.txt "Known Person Name"
 
 # Test 2: French translation and processing  
 echo "Test 2: French article processing..."
-name_matcher data/raw_articles/french_1_positive.rtf "John Varley"
+name_matcher_tool raw_articles/french_1_positive.rtf "John Varley"
 
 # Test 3: German translation and processing
 echo "Test 3: German article processing..."
-name_matcher data/raw_articles/german_3_positive.rtf "Christoph Gröner"
+name_matcher_tool raw_articles/german_3_positive.rtf "Christoph Gröner"
 
 # Test 4: Spanish translation and processing
 echo "Test 4: Spanish article processing..."
-name_matcher data/raw_articles/spanish_1_positive.rtf "Alejandro Hamlyn"
+name_matcher_tool raw_articles/spanish_1_positive.rtf "Alejandro Hamlyn"
 
 echo "✅ Basic functionality tests complete"
 ```
@@ -174,17 +174,17 @@ echo "=========================="
 
 # Positive cases (should find matches)
 echo "POSITIVE CASES (should return MATCH):"
-name_matcher data/raw_articles/french_1_positive.rtf "John Varley" --output positive_1.json
-name_matcher data/raw_articles/german_3_positive.rtf "Christopher Gröner" --output positive_2.json
+name_matcher_tool raw_articles/french_1_positive.rtf "John Varley" --output positive_1.json
+name_matcher_tool raw_articles/german_3_positive.rtf "Christopher Gröner" --output positive_2.json
 
 # Negative cases (should not find false matches)
 echo "NEGATIVE CASES (should return NO_MATCH):"
-name_matcher data/raw_articles/french_1_positive.rtf "Claude AI" --output negative_1.json
-name_matcher data/raw_articles/spanish_negative_1.rtf "Marie Curie" --output negative_2.json
+name_matcher_tool raw_articles/french_1_positive.rtf "Claude AI" --output negative_1.json
+name_matcher_tool raw_articles/spanish_negative_1.rtf "Marie Curie" --output negative_2.json
 
 # Edge cases (test precise matching rules)
 echo "EDGE CASES (test precision):"
-name_matcher data/raw_articles/french_1_positive.rtf "Annie Brorhilker" --output edge_1.json
+name_matcher_tool raw_articles/french_1_positive.rtf "Annie Brorhilker" --output edge_1.json
 
 echo "✅ Precision tests complete - check output files for results"
 ```
@@ -206,16 +206,16 @@ LANGUAGES=("french" "german" "spanish" "english")
 TARGET_NAMES=("John Smith" "Marie Dubois" "Klaus Mueller" "Carlos Rodriguez")
 
 for lang in "${LANGUAGES[@]}"; do
-    for file in data/raw_articles/${lang}_*.rtf data/raw_articles/${lang}_*.txt; do
+    for file in raw_articles/${lang}_*.rtf raw_articles/${lang}_*.txt; do
         if [ -f "$file" ]; then
             filename=$(basename "$file")
             echo "Testing: $filename"
             
             # Test with a name that should match
-            name_matcher "$file" "Known Person" --output "$RESULTS_DIR/${filename%.*}_positive.json"
+            name_matcher_tool "$file" "Known Person" --output "$RESULTS_DIR/${filename%.*}_positive.json"
             
             # Test with a name that should not match
-            name_matcher "$file" "Unknown Person" --output "$RESULTS_DIR/${filename%.*}_negative.json"
+            name_matcher_tool "$file" "Unknown Person" --output "$RESULTS_DIR/${filename%.*}_negative.json"
         fi
     done
 done
@@ -239,27 +239,27 @@ echo "✅ Comprehensive validation complete - results in $RESULTS_DIR/"
 
 **1. Take any article file:**
 ```
-data/raw_articles/your_article.rtf
+raw_articles/your_article.rtf
 ```
 
 **2. Create positive test:**
 ```bash
 # Find a person actually mentioned in the article
-name_matcher data/raw_articles/your_article.rtf "Person Actually Mentioned"
+name_matcher_tool raw_articles/your_article.rtf "Person Actually Mentioned"
 # Expected: MATCH
 ```
 
 **3. Create negative test:**
 ```bash  
 # Use a person definitely NOT in the article
-name_matcher data/raw_articles/your_article.rtf "Random Person Name"
+name_matcher_tool raw_articles/your_article.rtf "Random Person Name"
 # Expected: NO_MATCH
 ```
 
 **4. Create edge case test:**
 ```bash
 # Use a similar but different name
-name_matcher data/raw_articles/your_article.rtf "Similar But Different Name"
+name_matcher_tool raw_articles/your_article.rtf "Similar But Different Name"
 # Expected: NO_MATCH (testing precision)
 ```
 
@@ -276,20 +276,20 @@ echo "========================================"
 mkdir -p test_results
 
 # Test each file with multiple target names
-for file in data/raw_articles/*.rtf data/raw_articles/*.txt; do
+for file in raw_articles/*.rtf raw_articles/*.txt; do
     if [ -f "$file" ]; then
         filename=$(basename "$file")
         echo "Testing: $filename"
         
         # Test cases for each file
         echo "  Positive case..."
-        name_matcher "$file" "Expected Person Name" --output "test_results/${filename%.*}_positive.json"
+        name_matcher_tool "$file" "Expected Person Name" --output "test_results/${filename%.*}_positive.json"
         
         echo "  Negative case..."
-        name_matcher "$file" "Unexpected Person Name" --output "test_results/${filename%.*}_negative.json"
+        name_matcher_tool "$file" "Unexpected Person Name" --output "test_results/${filename%.*}_negative.json"
         
         echo "  Edge case..."
-        name_matcher "$file" "Similar Name Variation" --output "test_results/${filename%.*}_edge.json"
+        name_matcher_tool "$file" "Similar Name Variation" --output "test_results/${filename%.*}_edge.json"
     fi
 done
 
