@@ -6,7 +6,6 @@ import os
 import re
 from typing import List, Dict, Optional
 from dataclasses import dataclass
-import json
 
 # Try OpenAI first, fallback to local models
 try:

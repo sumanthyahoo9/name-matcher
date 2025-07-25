@@ -66,6 +66,15 @@ The tool gives you clear answers:
 - ✅ **RTF files** - Rich text format documents  
 - 📋 **PDF files** - Can be added with additional setup
 
+### Article Length Guidelines
+
+- ✅ Optimal: Up to 3,000 words (~2,000 characters recommended)
+- ⚠️ Supported: 3,000-10,000 words (may be summarized for processing)
+- 📋 Very Long: 10,000+ words (full entity extraction, but LLM may see truncated content)
+
+For best results: Keep articles focused and under 3,000 words. 
+The tool extracts entities from the full text regardless of length, but very long articles may have their content summarized when sent to the AI matching component.
+
 ### Languages Supported
 
 - 🇺🇸 **English** - Direct processing

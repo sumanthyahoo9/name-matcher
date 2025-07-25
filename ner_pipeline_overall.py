@@ -232,7 +232,7 @@ class EnhancedMultilingualNER:
             entity_groups[key].append(entity)
         
         final_entities = []
-        for (normalized_name, entity_type), group in entity_groups.items():
+        for _, group in entity_groups.items():
             if not group:
                 continue
             

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Complete ARVA AI Adverse Media Screening Pipeline
+Complete AI Adverse Media Screening Pipeline
 Command-line interface for the full Translation → NER → LLM pipeline
 
 Usage:
-    python arva_pipeline.py <file_path> <target_name> [--debug] [--api-key YOUR_KEY]
+    python tool_pipeline.py <file_path> <target_name> [--debug] [--api-key YOUR_KEY]
 
 Example:
-    python arva_pipeline.py data/my_text.txt "John Smith" --debug
-    python arva_pipeline.py data/french_article.rtf "Marie Dubois" --api-key sk-...
+    python tool.py data/my_text.txt "John Smith" --debug
+    python tool.py data/french_article.rtf "Marie Dubois" --api-key sk-...
 """
 
 import argparse
@@ -26,15 +26,15 @@ except ImportError as e:
     print("Make sure ner_pipeline_overall.py and clean_llm_matcher.py are in the same directory")
     sys.exit(1)
 
-class ArvaAIPipeline:
-    """Complete ARVA AI adverse media screening pipeline"""
+class NameMatcherPipeline:
+    """Complete tool AI adverse media screening pipeline"""
     
     def __init__(self, openai_api_key=None, debug=False):
         """Initialize the complete pipeline"""
         self.debug = debug
         
         if self.debug:
-            print("🚀 Initializing ARVA AI Pipeline...")
+            print("🚀 Initializing tool AI Pipeline...")
         
         # Initialize NER pipeline
         try:
@@ -70,7 +70,7 @@ class ArvaAIPipeline:
         """
         if self.debug:
             print(f"\n{'='*80}")
-            print("📋 ARVA AI ADVERSE MEDIA SCREENING")
+            print("📋 tool AI ADVERSE MEDIA SCREENING")
             print(f"{'='*80}")
             print(f"File: {file_path}")
             print(f"Target: {target_name}")
@@ -143,7 +143,7 @@ class ArvaAIPipeline:
             "match_explanation": llm_result.explanation,
             "match_method": llm_result.method,
             "entities_analyzed": llm_result.entities_analyzed,
-            "pipeline_version": "ARVA_AI_v1.0"
+            "pipeline_version": "tool_AI_v1.0"
         }
         
         return final_results
@@ -205,14 +205,14 @@ class ArvaAIPipeline:
 def main():
     """Command-line interface"""
     parser = argparse.ArgumentParser(
-        description='ARVA AI Adverse Media Screening Pipeline',
+        description='Name Matcher Adverse Media Screening Pipeline',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python arva_pipeline.py data/article.txt "John Smith"
-  python arva_pipeline.py data/french_article.rtf "Marie Dubois" --debug
-  python arva_pipeline.py data/german_article.rtf "Klaus Mueller" --api-key sk-proj-...
-  python arva_pipeline.py data/spanish_article.txt "Carlos Rodriguez" --output results.json
+  python tool.py data/article.txt "John Smith"
+  python tool.py data/french_article.rtf "Marie Dubois" --debug
+  python tool.py data/german_article.rtf "Klaus Mueller" --api-key sk-proj-...
+  python tool.py data/spanish_article.txt "Carlos Rodriguez" --output results.json
         """
     )
     
@@ -244,7 +244,7 @@ Examples:
     
     # Initialize and run pipeline
     try:
-        pipeline = ArvaAIPipeline(
+        pipeline = NameMatcherPipeline(
             openai_api_key=args.api_key,
             debug=args.debug
         )
